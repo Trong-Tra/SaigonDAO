@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "./SaigonLST.sol";
-import "./SGLP.sol";
+import "../Liquidity/SGLP.sol";
 import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract LSTFactory is Ownable {
@@ -63,5 +63,13 @@ contract LSTFactory is Ownable {
      */
     function getLiquidityPool(address lstToken) external view returns (address) {
         return lstToLiquidityPool[lstToken];
+    }
+
+    function getDeployedLiquidityPoolCount() external view returns (uint256) {
+        return deployedLiquidityPools.length;
+    }
+
+    function getDeployedLiquidityPools() external view returns (address[] memory) {
+        return deployedLiquidityPools;
     }
 }
