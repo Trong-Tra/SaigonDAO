@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "../../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract LST is ERC20, Ownable {
+contract SaigonLST is ERC20, Ownable {
     address public liquidityPool;
 
     /**
