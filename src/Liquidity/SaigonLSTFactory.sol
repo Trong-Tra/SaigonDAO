@@ -28,12 +28,12 @@ contract LSTFactory is Ownable {
      * @return lst Address of the deployed LST token
      * @return pool Address of the deployed liquidity pool
      */
-    function createLSTPair(string memory name, string memory symbol) external returns (address lst, address pool) {
+    function createLSTPair(string memory name, string memory symbol, address liquidityToken) external returns (address lst, address pool) {
         // Deploy new LST token
         SaigonLST lstToken = new SaigonLST(name, symbol);
         
         // Deploy new liquidity pool
-        SGLP liquidityPool = new SGLP(address(lstToken));
+        SGLP liquidityPool = new SGLP(address(lstToken), liquidityToken);
         
         // Set the liquidity pool address in the LST contract
         lstToken.setLiquidityPool(address(liquidityPool));
