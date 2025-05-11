@@ -97,4 +97,14 @@ contract LiquidityPool is Ownable {
         exchangeRate = (poolLiquiditVolume * 1 ether) / lstVolume;
         emit ExchangeRateUpdated(oldRate, exchangeRate);
     }
+
+    function getExchangeRate() external view returns (uint256) {
+        return exchangeRate;
+    }
+    function getPoolLiquidityVolume() external view returns (uint256) {
+        return poolLiquiditVolume;
+    }
+    function getLSTVolume() external view returns (uint256) {
+        return lstVolume;
+    }
 }
