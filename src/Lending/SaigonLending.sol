@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
+pragma solidity ^0.8.24;
 
 import "../Liquidity/SGLP.sol";
 import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import "../../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "../../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import { vBTC_VNST_Vault } from "../Liquidity/vBTC_VNST.sol";
 
 contract SaigonLending is Ownable {
     using SafeERC20 for IERC20;
@@ -39,6 +40,9 @@ contract SaigonLending is Ownable {
     mapping(address => uint256) public userLoanCount;
     uint256 public totalLoans;
 
+    // Add mapping for token swap vaults
+    mapping(address => mapping(address => address)) public tokenSwapVaults;
+
     // Events
     event LoanCreated(
         address indexed borrower,
@@ -54,6 +58,7 @@ contract SaigonLending is Ownable {
     event LoanLiquidated(address indexed borrower, uint256 indexed loanId);
     event PoolRegistered(address indexed tokenAddress, address indexed poolAddress);
     event PriceUpdated(address indexed tokenAddress, uint256 price);
+    event SwapVaultRegistered(address indexed token1, address indexed token2, address indexed vaultAddress);
 
     constructor() Ownable(msg.sender) {}
 
@@ -67,6 +72,20 @@ contract SaigonLending is Ownable {
         require(pool != address(0), "SaigonLending: Invalid pool address");
         SGLiquidityPools[token] = SGLP(pool);
         emit PoolRegistered(token, pool);
+    }
+
+    /**
+     * @dev Register a token swap vault, this is temporary, in real world implementation, we need to route the correct liquidity flow, or use our own liquidity to allow swapping
+     * @param token1 First token in the pair
+     * @param token2 Second token in the pair
+     * @param vaultAddress Address of the token swap vault
+     */
+    function registerSwapVault(address token1, address token2, address vaultAddress) external onlyOwner {
+        require(token1 != address(0) && token2 != address(0), "SaigonLending: Invalid token address");
+        require(vaultAddress != address(0), "SaigonLending: Invalid vault address");
+        tokenSwapVaults[token1][token2] = vaultAddress;
+        tokenSwapVaults[token2][token1] = vaultAddress; // Register for both directions
+        emit SwapVaultRegistered(token1, token2, vaultAddress);
     }
 
     /**
@@ -299,7 +318,6 @@ contract SaigonLending is Ownable {
      * @dev Liquidate an eligible loan
      * @param borrower Borrower address
      * @param loanId Loan ID
-     * TODO: Implement a mock swap that get funded by 2 tokens
      */
     function liquidate(address borrower, uint256 loanId) external onlyOwner {
         require(isLiquidatable(borrower, loanId), "SaigonLending: Loan not liquidatable");
@@ -307,11 +325,12 @@ contract SaigonLending is Ownable {
         Loan storage loan = userLoans[borrower][loanId];
         SGLP pool = SGLiquidityPools[loan.borrowToken];
         
-        // Calculate the value of collateral and debt in USD terms
-        uint256 collateralValue = (loan.collateralAmount * tokenPrices[loan.collateralToken]) / 1 ether;
-        uint256 borrowValue = (loan.borrowAmount * tokenPrices[loan.borrowToken]) / 1 ether;
+        // Get the swap vault for this token pair
+        address vaultAddress = tokenSwapVaults[loan.collateralToken][loan.borrowToken];
+        require(vaultAddress != address(0), "SaigonLending: No swap vault for token pair");
+        vBTC_VNST_Vault vault = vBTC_VNST_Vault(vaultAddress);
         
-        // Owner sends repayment amount to contract
+        // Owner sends repayment amount to contract to close the loan
         IERC20(loan.borrowToken).safeTransferFrom(msg.sender, address(this), loan.borrowAmount);
         
         // Approve the pool to take the borrowed amount back
@@ -320,8 +339,28 @@ contract SaigonLending is Ownable {
         // Call pool to repay
         pool.repay(borrower, loan.borrowAmount);
         
-        // Temporarily solution, for better flow on MVP just swap the tokens and provide back to the liquidity
-        IERC20(loan.collateralToken).safeTransfer(msg.sender, loan.collateralAmount);
+        // Approve vault to use the collateral token
+        IERC20(loan.collateralToken).approve(vaultAddress, loan.collateralAmount);
+        
+        // Calculate minimum amount we should receive when swapping (with 1% slippage tolerance)
+        uint256 expectedOutput = vault.getExpectedOut(
+            loan.collateralToken, 
+            loan.borrowToken, 
+            loan.collateralAmount
+        );
+        uint256 minAmountOut = (expectedOutput * 99) / 100; // 1% slippage tolerance
+        
+        // Swap collateral for borrow token using the vault
+        uint256 swappedAmount = vault.swap(
+            loan.collateralToken,
+            loan.borrowToken,
+            loan.collateralAmount,
+            minAmountOut
+        );
+        
+        // Return the swapped tokens to the liquidity pool to enhance liquidity
+        IERC20(loan.borrowToken).approve(address(pool), swappedAmount);
+        pool.provideLiquidity(swappedAmount);
         
         // Update loan status
         loan.active = false;
