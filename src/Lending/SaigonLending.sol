@@ -299,7 +299,7 @@ contract SaigonLending is Ownable {
      * @dev Liquidate an eligible loan
      * @param borrower Borrower address
      * @param loanId Loan ID
-     * TODO implement a mock swapping mechanism for liquidation
+     * TODO: Implement a mock swap that get funded by 2 tokens
      */
     function liquidate(address borrower, uint256 loanId) external onlyOwner {
         require(isLiquidatable(borrower, loanId), "SaigonLending: Loan not liquidatable");
@@ -307,13 +307,9 @@ contract SaigonLending is Ownable {
         Loan storage loan = userLoans[borrower][loanId];
         SGLP pool = SGLiquidityPools[loan.borrowToken];
         
-        // Calculate liquidation price (for simplicity, use full collateral for repayment)
+        // Calculate the value of collateral and debt in USD terms
         uint256 collateralValue = (loan.collateralAmount * tokenPrices[loan.collateralToken]) / 1 ether;
-        uint256 repaymentValue = collateralValue;
-        uint256 repaymentAmount = (repaymentValue * 1 ether) / tokenPrices[loan.borrowToken];
-        
-        // For the mock implementation, we're assuming the liquidator (owner) has the tokens
-        // In a real implementation, the collateral would be sold to get the borrowed tokens
+        uint256 borrowValue = (loan.borrowAmount * tokenPrices[loan.borrowToken]) / 1 ether;
         
         // Owner sends repayment amount to contract
         IERC20(loan.borrowToken).safeTransferFrom(msg.sender, address(this), loan.borrowAmount);
@@ -324,7 +320,7 @@ contract SaigonLending is Ownable {
         // Call pool to repay
         pool.repay(borrower, loan.borrowAmount);
         
-        // Transfer collateral to liquidator (owner)
+        // Temporarily solution, for better flow on MVP just swap the tokens and provide back to the liquidity
         IERC20(loan.collateralToken).safeTransfer(msg.sender, loan.collateralAmount);
         
         // Update loan status
