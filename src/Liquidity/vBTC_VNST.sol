@@ -3,7 +3,7 @@ pragma solidity ^0.8.26;
 
 import "../interfaces/IMockToken.sol";
 import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import "../../lib/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
+import "../../lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 import "../Oracle/MockPriceOracle.sol";
 
 contract vBTC_VNST_Vault is Ownable, ReentrancyGuard {
