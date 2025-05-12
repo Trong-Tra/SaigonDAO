@@ -6,14 +6,16 @@ import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 /**
  * @title MockPriceOracle
  * @dev A simple price oracle implementation for MVP purposes
- * Only supports VNST and vBTC with fixed price (1 vBTC = 2,600,000,000 VNST)
+ * Only supports VNST and vBTC with fixed price (1 vBTC = 2.6 VNST)
  * Both tokens have 18 decimal places
  */
 contract MockPriceOracle is Ownable {
-    uint256 public constant VBTC_PRICE_IN_VNST = 2_600_000_000;
+    // Price with 18 decimals of precision: 2.6 = 2.6 * 10^18
+    uint256 public constant VBTC_PRICE_IN_VNST = 26 * 10**17; // 2.6 * 10^18
     
     // Decimal precision for both tokens (18 decimals)
     uint256 public constant DECIMALS = 18;
+    uint256 public constant PRECISION = 10**18;
     
     // Token addresses
     address public vnstToken;
@@ -46,8 +48,8 @@ contract MockPriceOracle is Ownable {
         // If getting VNST price in vBTC
         else if (baseToken == vnstToken && quoteToken == vbtcToken) {
             // Return the inverse price (1 / VBTC_PRICE_IN_VNST) with sufficient precision
-            // Use 10^18 as a scaling factor to avoid precision loss
-            return (10**18) / VBTC_PRICE_IN_VNST;
+            // Use 10^36 as a scaling factor to avoid precision loss (10^18 * 10^18)
+            return (PRECISION * PRECISION) / VBTC_PRICE_IN_VNST;
         }
         
         revert("MockPriceOracle: unsupported token pair");
@@ -65,13 +67,13 @@ contract MockPriceOracle is Ownable {
         
         // If converting from vBTC to VNST
         if (fromToken == vbtcToken && toToken == vnstToken) {
-            // 1 vBTC (1e18) = 2,600,000,000 VNST (2.6e9 * 1e18)
-            return amount * VBTC_PRICE_IN_VNST;
+            // 1 vBTC (1e18) = 2.6 VNST (2.6 * 1e18)
+            return (amount * VBTC_PRICE_IN_VNST) / PRECISION;
         }
         // If converting from VNST to vBTC
         else if (fromToken == vnstToken && toToken == vbtcToken) {
             // Need to divide by price while preserving precision
-            return (amount * (10**18)) / VBTC_PRICE_IN_VNST;
+            return (amount * PRECISION) / VBTC_PRICE_IN_VNST;
         }
         
         revert("MockPriceOracle: unsupported token pair");
