@@ -12,21 +12,15 @@ import "../src/Lending/SaigonLending.sol";
 import "../src/facadeContract.sol";
 import "../src/interfaces/IMockToken.sol";
 
-/**
- * @title DeployAll
- * @dev Master script to deploy the entire SaigonDAO ecosystem in the correct order
- */
 contract DeployAll is Script {
     // Token parameters
     string constant vBTC_NAME = "v Bitcoin";
     string constant vBTC_SYMBOL = "vBTC";
-    uint256 constant vBTC_INITIAL_SUPPLY = 1_000_000 * 10**18; // 1 million vBTC
+    uint256 constant vBTC_INITIAL_SUPPLY = 1_000_000; // 1 million vBTC (decimals added by the contract)
     
     string constant VNST_NAME = "Viet Nam Stable Token";
     string constant VNST_SYMBOL = "VNST";
-    uint256 constant VNST_INITIAL_SUPPLY = 2_600_000 * 10**18; // 2.6 million VNST
-
-    uint8 constant DECIMALS = 18;
+    uint256 constant VNST_INITIAL_SUPPLY = 2_600_000; // 2.6 million VNST (decimals added by the contract)
 
     // Deployed contract addresses
     address public vbtcToken;
@@ -36,6 +30,8 @@ contract DeployAll is Script {
     address public lstFactoryAddress;
     address public vbtcPoolAddress;
     address public vnstPoolAddress;
+    address public vbtcLSTAddress;
+    address public vnstLSTAddress;
     address public lendingAddress;
     address public facadeAddress;
 
@@ -73,21 +69,19 @@ contract DeployAll is Script {
     function deployTokens() internal {
         console.log("Deploying Tokens...");
         
-        // Deploy vBTC token
+        // Deploy vBTC token 
         MockToken vBTC = new MockToken(
             vBTC_NAME,
             vBTC_SYMBOL,
-            vBTC_INITIAL_SUPPLY,
-            DECIMALS
+            vBTC_INITIAL_SUPPLY
         );
         vbtcToken = address(vBTC);
 
-        // Deploy VNST token
+        // Deploy VNST token 
         MockToken VNST = new MockToken(
             VNST_NAME,
             VNST_SYMBOL,
-            VNST_INITIAL_SUPPLY,
-            DECIMALS
+            VNST_INITIAL_SUPPLY
         );
         vnstToken = address(VNST);
         
@@ -134,29 +128,33 @@ contract DeployAll is Script {
         
         SaigonLSTFactory factory = SaigonLSTFactory(lstFactoryAddress);
         
-        // Deploy vBTC Liquidity Pool
+        // Create vBTC LST pair
         string memory vbtcLPName = string(abi.encodePacked("Saigon ", vBTC_NAME, " LP"));
         string memory vbtcLPSymbol = string(abi.encodePacked("sg", vBTC_SYMBOL, "LP"));
         
-        address vbtcLSTAddress = factory.createLST(vbtcLPName, vbtcLPSymbol, 18);
-        SGLP vbtcPool = new SGLP(vbtcToken, vbtcLSTAddress);
-        vbtcPoolAddress = address(vbtcPool);
+        // Use the factory's createLSTPair function which handles both LST and LP creation
+        (address lstToken, address liquidityPool) = factory.createLSTPair(
+            vbtcLPName,
+            vbtcLPSymbol,
+            vbtcToken // The liquidity token that can be deposited in the pool
+        );
         
-        // Initialize vBTC LST
-        SaigonLST vbtcLST = SaigonLST(vbtcLSTAddress);
-        vbtcLST.initialize(vbtcPoolAddress);
+        vbtcLSTAddress = lstToken;
+        vbtcPoolAddress = liquidityPool;
         
-        // Deploy VNST Liquidity Pool
+        // Create VNST LST pair
         string memory vnstLPName = string(abi.encodePacked("Saigon ", VNST_NAME, " LP"));
         string memory vnstLPSymbol = string(abi.encodePacked("sg", VNST_SYMBOL, "LP"));
         
-        address vnstLSTAddress = factory.createLST(vnstLPName, vnstLPSymbol, 18);
-        SGLP vnstPool = new SGLP(vnstToken, vnstLSTAddress);
-        vnstPoolAddress = address(vnstPool);
+        // Use the factory's createLSTPair function which handles both LST and LP creation
+        (lstToken, liquidityPool) = factory.createLSTPair(
+            vnstLPName,
+            vnstLPSymbol,
+            vnstToken // The liquidity token that can be deposited in the pool
+        );
         
-        // Initialize VNST LST
-        SaigonLST vnstLST = SaigonLST(vnstLSTAddress);
-        vnstLST.initialize(vnstPoolAddress);
+        vnstLSTAddress = lstToken;
+        vnstPoolAddress = liquidityPool;
         
         console.log("vBTC Liquidity Pool deployed at:", vbtcPoolAddress);
         console.log("vBTC LST Token deployed at:", vbtcLSTAddress);
@@ -188,16 +186,11 @@ contract DeployAll is Script {
     function deployFacade() internal {
         console.log("Deploying Facade Contract...");
         
-        // Deploy the facade contract
+        // Deploy the facade contract with the 2 required arguments
+        // (previously had 8 arguments which was incorrect)
         SaigonFacade facade = new SaigonFacade(
-            vbtcToken,
-            vnstToken,
-            vaultAddress,
-            oracleAddress,
-            lendingAddress,
             lstFactoryAddress,
-            vbtcPoolAddress,
-            vnstPoolAddress
+            lendingAddress
         );
         facadeAddress = address(facade);
         
@@ -212,7 +205,9 @@ contract DeployAll is Script {
         console.log("vBTC_VNST Vault: ", vaultAddress);
         console.log("LST Factory: ", lstFactoryAddress);
         console.log("vBTC Liquidity Pool: ", vbtcPoolAddress);
+        console.log("vBTC LST Token: ", vbtcLSTAddress);
         console.log("VNST Liquidity Pool: ", vnstPoolAddress);
+        console.log("VNST LST Token: ", vnstLSTAddress);
         console.log("Lending Contract: ", lendingAddress);
         console.log("Facade Contract: ", facadeAddress);
         console.log("===============================");
