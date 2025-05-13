@@ -20,7 +20,7 @@ contract SaigonFacade is Ownable {
     using SafeERC20 for IERC20;
 
     // Core protocol contracts
-    LSTFactory public lstFactory;
+    SaigonLSTFactory public lstFactory;
     SaigonLending public lendingProtocol;
 
     // Events
@@ -38,7 +38,7 @@ contract SaigonFacade is Ownable {
     constructor(address _lstFactory, address _lendingProtocol) Ownable(msg.sender) {
         require(_lstFactory != address(0), "SaigonFacade: Invalid factory address");
         require(_lendingProtocol != address(0), "SaigonFacade: Invalid lending protocol address");
-        lstFactory = LSTFactory(_lstFactory);
+        lstFactory = SaigonLSTFactory(_lstFactory);
         lendingProtocol = SaigonLending(_lendingProtocol);
     }
 

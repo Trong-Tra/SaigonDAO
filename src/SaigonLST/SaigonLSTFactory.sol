@@ -5,7 +5,7 @@ import "./SaigonLST.sol";
 import "../Liquidity/SGLP.sol";
 import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract LSTFactory is Ownable {
+contract SaigonLSTFactory is Ownable {
     // Arrays to keep track of deployed contracts
     address[] public deployedLSTTokens;
     address[] public deployedLiquidityPools;
