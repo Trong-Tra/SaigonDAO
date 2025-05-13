@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "../../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SaigonLST is ERC20, Ownable {
     address public liquidityPool;

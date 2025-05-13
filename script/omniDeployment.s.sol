@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "forge-std/Script.sol";
-import "../src/Liquidity/mockToken.sol";
-import "../src/Oracle/MockPriceOracle.sol";
-import "../src/Liquidity/vBTC_VNST.sol";
-import "../src/SaigonLST/SaigonLSTFactory.sol";
-import "../src/SaigonLST/SaigonLST.sol";
-import "../src/Liquidity/SGLP.sol";
-import "../src/Lending/SaigonLending.sol";
-import "../src/facadeContract.sol";
-import "../src/interfaces/IMockToken.sol";
+import "@forge-std/Script.sol";
+import "@liquidity/mockToken.sol";
+import "@oracle/MockPriceOracle.sol";
+import "@liquidity/vBTC_VNST.sol";
+import "@saigonlst/SaigonLSTFactory.sol";
+import "@saigonlst/SaigonLST.sol";
+import "@liquidity/SGLP.sol";
+import "@lending/SaigonLending.sol";
+import "@src/facadeContract.sol";
+import "@interfaces/IMockToken.sol";
 
 contract DeployAll is Script {
     // Token parameters

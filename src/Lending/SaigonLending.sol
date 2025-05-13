@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "../Liquidity/SGLP.sol";
-import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import "../../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import { SafeERC20 } from "../../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import { vBTC_VNST_Vault } from "../Liquidity/vBTC_VNST.sol";
+import "@liquidity/SGLP.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { vBTC_VNST_Vault } from "@liquidity/vBTC_VNST.sol";
 
 contract SaigonLending is Ownable {
     using SafeERC20 for IERC20;

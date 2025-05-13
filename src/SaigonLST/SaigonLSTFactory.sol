@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "./SaigonLST.sol";
-import "../Liquidity/SGLP.sol";
-import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@saigonlst/SaigonLST.sol";
+import "@liquidity/SGLP.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SaigonLSTFactory is Ownable {
     // Arrays to keep track of deployed contracts

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "./Liquidity/SGLP.sol";
-import "./SaigonLST/SaigonLST.sol";
-import "./SaigonLST/SaigonLSTFactory.sol";
-import "./Lending/SaigonLending.sol";
-import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@liquidity/SGLP.sol";
+import "@saigonlst/SaigonLST.sol";
+import "@saigonlst/SaigonLSTFactory.sol";
+import "@lending/SaigonLending.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @dev Facade pattern implementation for SaigonDAO protocols

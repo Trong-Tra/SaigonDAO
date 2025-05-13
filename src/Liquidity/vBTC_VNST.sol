@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import "../interfaces/IMockToken.sol";
-import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import "../../lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
-import "../Oracle/MockPriceOracle.sol";
+import "@interfaces/IMockToken.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@oracle/MockPriceOracle.sol";
 
 contract vBTC_VNST_Vault is Ownable, ReentrancyGuard {
     // Token contracts
