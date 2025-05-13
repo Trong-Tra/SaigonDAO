@@ -12,9 +12,16 @@ contract MockToken is ERC20 {
      * @dev Constructor that gives the msg.sender all of the initial supply.
      * @param name The name of the token
      * @param symbol The symbol of the token
+     * @param _initialSupply The initial supply of the token
      */
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
-		_mint(msg.sender, 1e20 * (10 ** decimals()));
+    constructor(
+        string memory name, 
+        string memory symbol, 
+        uint256 _initialSupply
+    ) 
+    ERC20(name, symbol) 
+    {
+        _mint(msg.sender, _initialSupply * (10 ** decimals()));
 	}
 
     function mint(address account, uint256 amount) public {
