@@ -24,7 +24,7 @@ export default function Header() {
         onClick={
           isWalletConnected ? handleDisconnectWallet : handleConnectWallet
         }
-        className={`py-3 px-6 rounded-full font-medium ${
+        className={`py-4 px-14 rounded-full font-medium ${
           isWalletConnected
             ? "bg-amber-100 text-amber-800"
             : "bg-gradient-to-r from-amber-400 to-red-600 text-white"
