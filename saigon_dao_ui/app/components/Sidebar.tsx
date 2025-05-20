@@ -2,10 +2,25 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
   const [activeLink, setActiveLink] = useState("provide-liquidity");
+  const pathname = usePathname();
+
+  // Update active link based on current path
+  useEffect(() => {
+    if (pathname.startsWith("/liquidity")) {
+      setActiveLink("provide-liquidity");
+    } else if (pathname.startsWith("/lending")) {
+      setActiveLink("lending");
+    } else if (pathname.startsWith("/margin")) {
+      setActiveLink("margin");
+    } else if (pathname.startsWith("/flash-loan")) {
+      setActiveLink("flash-loan");
+    }
+  }, [pathname]);
 
   const menuItems = [
     {
@@ -27,7 +42,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-red-100 via-red-200 to-amber-100 rounded-3xl shadow-lg h-auto min-h-[700px] p-8 flex flex-col border border-[#DA251D]/10 font-orbitron">
+    <div className="bg-gradient-to-b from-red-100 via-red-200 to-amber-100 rounded-3xl shadow-lg h-auto min-h-[700px] p-8 flex flex-col border border-[#DA251D]/10 font-orbitron sticky top-6 transition-all duration-300 ease-in-out">
       <div className="text-center mb-10">
         <h2 className="text-4xl text-black font-jakarta">SaigonDAO</h2>
       </div>
