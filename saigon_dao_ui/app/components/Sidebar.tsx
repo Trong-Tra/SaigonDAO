@@ -8,7 +8,11 @@ export default function Sidebar() {
   const [activeLink, setActiveLink] = useState("provide-liquidity");
 
   const menuItems = [
-    { id: "provide-liquidity", label: "Provide Liquidity", href: "/liquidity" },
+    {
+      id: "provide-liquidity",
+      label: "Provide Liquidity",
+      href: "/liquidity/VNST", // Default to VNST
+    },
     { id: "lending", label: "Lending", href: "/lending" },
     { id: "margin", label: "Margin", href: "/margin" },
     { id: "flash-loan", label: "Flash Loan", href: "/flash-loan" },
@@ -74,9 +78,9 @@ export default function Sidebar() {
             <Link
               key={link.id}
               href={link.href}
-              className="w-8 h-8 flex items-center justify-center text-black/60 hover:text-black font-orbitron"
+              className="w-8 h-8 flex items-center justify-center text-black/60 hover:text-black transition-all duration-300 ease-in-out"
             >
-              <div className="relative w-6 h-6">
+              <div className="relative w-6 h-6 transition-transform duration-300 ease-in-out hover:scale-125">
                 <Image
                   src={link.icon}
                   alt={`${link.id} icon`}
