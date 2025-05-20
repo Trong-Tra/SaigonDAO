@@ -30,7 +30,7 @@ export default function TokenNavigation({
   return (
     <div className="flex justify-center mb-12 px-3 transform -translate-y-4">
       <div
-        className={`p-1 rounded-full w-full max-w-lg transition-all duration-300 ease-in-out ${
+        className={`p-1 rounded-full w-full max-w-xl transition-all duration-300 ease-in-out ${
           currentToken === "VNST"
             ? "bg-gradient-to-r from-gray-400 to-amber-500"
             : "bg-gradient-to-r from-slate-100 to-amber-500"
@@ -44,7 +44,7 @@ export default function TokenNavigation({
           ></div>
           <button
             onClick={() => handleTokenClick("VNST")}
-            className={`flex-1 py-3 px-8 rounded-full text-center font-medium z-10 transition-all duration-300 ease-in-out flex items-center justify-center group ${
+            className={`flex-1 py-3 px-12 rounded-full text-center font-medium z-10 transition-all duration-300 ease-in-out flex items-center justify-center group ${
               currentToken === "VNST"
                 ? "text-black"
                 : "text-gray-600 hover:text-gray-800"
@@ -54,12 +54,12 @@ export default function TokenNavigation({
                 : "hover:scale-[1.02]"
             }`}
           >
-            <div className="w-10 h-10 relative mr-3 flex items-center justify-center transition-all duration-300 ease-in-out">
+            <div className="w-12 h-12 relative mr-4 flex items-center justify-center transition-all duration-300 ease-in-out">
               <Image
                 src="/images/tokens/vnst.png"
                 alt="VNST Token"
-                width={40}
-                height={40}
+                width={48}
+                height={48}
                 className={`object-contain transition-all duration-300 ease-in-out ${
                   isChangingToken && targetToken === "VNST"
                     ? "scale-110"
@@ -73,7 +73,7 @@ export default function TokenNavigation({
               />
             </div>
             <span
-              className={`font-medium text-lg transition-all duration-300 ease-in-out ${
+              className={`font-medium text-xl transition-all duration-300 ease-in-out ${
                 isChangingToken && targetToken === "VNST"
                   ? "transform translate-x-1"
                   : "group-hover:translate-x-0.5"
@@ -85,7 +85,7 @@ export default function TokenNavigation({
 
           <button
             onClick={() => handleTokenClick("vBTC")}
-            className={`flex-1 py-3 px-8 rounded-full text-center font-medium z-10 transition-all duration-300 ease-in-out flex items-center justify-center group ${
+            className={`flex-1 py-3 px-12 rounded-full text-center font-medium z-10 transition-all duration-300 ease-in-out flex items-center justify-center group ${
               currentToken === "vBTC"
                 ? "text-black"
                 : "text-gray-600 hover:text-gray-800"
@@ -95,12 +95,12 @@ export default function TokenNavigation({
                 : "hover:scale-[1.02]"
             }`}
           >
-            <div className="w-10 h-10 relative mr-3 flex items-center justify-center transition-all duration-300 ease-in-out">
+            <div className="w-12 h-12 relative mr-4 flex items-center justify-center transition-all duration-300 ease-in-out">
               <Image
                 src="/images/tokens/vbtc.png"
                 alt="vBTC Token"
-                width={40}
-                height={40}
+                width={48}
+                height={48}
                 className={`object-contain transition-all duration-300 ease-in-out ${
                   isChangingToken && targetToken === "vBTC"
                     ? "scale-110"
@@ -114,7 +114,7 @@ export default function TokenNavigation({
               />
             </div>
             <span
-              className={`font-medium text-lg transition-all duration-300 ease-in-out ${
+              className={`font-medium text-xl transition-all duration-300 ease-in-out ${
                 isChangingToken && targetToken === "vBTC"
                   ? "transform translate-x-1"
                   : "group-hover:translate-x-0.5"
