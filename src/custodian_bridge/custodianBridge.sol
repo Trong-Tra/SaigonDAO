@@ -77,40 +77,6 @@ contract vBTCCustodianBridge is Ownable, ReentrancyGuard {
         emit DirectMint(to, amount);
     }
     
-    /**
-     * @dev Add a new token that can be used to mint vBTC
-     * @param token Address of the token to support
-     * @param symbol Symbol of the token for display purposes
-     */
-    function addSupportedToken(address token, string calldata symbol) external onlyOwner {
-        require(token != address(0), "vBTCCustodianBridge: Cannot add zero address token");
-        require(bytes(symbol).length > 0, "vBTCCustodianBridge: Symbol cannot be empty");
-        require(!supportedTokens[token], "vBTCCustodianBridge: Token already supported");
-        
-        // Check if the price oracle supports this token pair
-        require(
-            priceOracle.isPairSupported(token, address(vBTC)),
-            "vBTCCustodianBridge: Oracle doesn't support this token pair"
-        );
-        
-        supportedTokens[token] = true;
-        tokenSymbols[token] = symbol;
-        
-        emit TokenOnboarded(token, symbol);
-    }
-    
-    /**
-     * @dev Remove a supported token
-     * @param token Address of the token to remove
-     */
-    function removeSupportedToken(address token) external onlyOwner {
-        require(supportedTokens[token], "vBTCCustodianBridge: Token not supported");
-        
-        supportedTokens[token] = false;
-        delete tokenSymbols[token];
-        
-        emit TokenRemoved(token);
-    }
     
     /**
      * @dev Update the mint fee
