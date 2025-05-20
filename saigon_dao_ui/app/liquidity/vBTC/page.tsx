@@ -5,6 +5,7 @@ import Image from "next/image";
 import StakingCard from "@/components/StakingCard";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import TokenNavigation from "@/components/TokenNavigation";
 
 export default function VBTCPage() {
   return (
@@ -18,6 +19,7 @@ export default function VBTCPage() {
 
         <main className="flex-1 pl-6">
           <div className="max-w-4xl mx-auto">
+            <TokenNavigation currentToken="vBTC" />
             <StakingCard tokenType="vBTC" />
           </div>
         </main>
