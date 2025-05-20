@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`min-h-screen bg-gradient-to-br from-amber-100 via-white-200 to-amber-100 ${plusJakartaSans.variable} ${orbitron.variable}`}
+        className={`min-h-screen bg-gradient-to-bl from-amber-100 via-white to-amber-100 ${plusJakartaSans.variable} ${orbitron.variable}`}
       >
         {children}
       </body>
