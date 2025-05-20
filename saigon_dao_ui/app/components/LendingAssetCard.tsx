@@ -20,7 +20,7 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
 
   return (
     <div
-      className="bg-white/30 backdrop-blur-sm border border-white/50 rounded-2xl shadow-lg p-6 transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02]"
+      className="bg-white/30 backdrop-blur-sm border rounded-2xl shadow-lg p-6 transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02]"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -47,7 +47,7 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mt-6">
-        <div className="bg-white/50 rounded-xl p-3">
+        <div className="bg-white/50 rounded-xl p-3 border border-black/20">
           <p className="text-gray-500 text-xs font-jakarta">
             Interest Rate per Block
           </p>
@@ -55,27 +55,24 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
             {asset.interestRate}
           </p>
         </div>
-        <div className="bg-white/50 rounded-xl p-3">
+        <div className="bg-white/50 rounded-xl p-3 border border-black/20">
           <p className="text-gray-500 text-xs font-jakarta">APY</p>
           <p className="text-xl font-bold font-orbitron bg-gradient-to-r from-amber-500 to-red-600 text-transparent bg-clip-text">
             {asset.apy}
           </p>
         </div>
-        <div className="bg-white/50 rounded-xl p-3">
+        <div className="bg-white/50 rounded-xl p-3 border border-black/20">
           <p className="text-gray-500 text-xs font-jakarta">Total Supply</p>
           <p className="text-xl font-bold font-orbitron">{asset.totalSupply}</p>
         </div>
-        <div className="bg-white/50 rounded-xl p-3">
+        <div className="bg-white/50 rounded-xl p-3 border border-black/20">
           <p className="text-gray-500 text-xs font-jakarta">Utilization</p>
           <p className="text-xl font-bold font-orbitron">{asset.utilization}</p>
         </div>
       </div>
 
-      <div className="mt-6 flex justify-between">
+      <div className="mt-6 flex justify-end">
         <button className="py-3 px-6 rounded-full font-medium transition-all duration-300 ease-in-out bg-gradient-to-r from-amber-400 to-red-600 text-white shadow-md hover:shadow-lg hover:scale-105">
-          Supply
-        </button>
-        <button className="py-3 px-6 rounded-full font-medium transition-all duration-300 ease-in-out bg-white border border-amber-500 text-amber-600 shadow-md hover:shadow-lg hover:scale-105">
           Borrow
         </button>
       </div>
