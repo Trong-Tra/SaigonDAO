@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import TokenSelector from "@/components/TokenSelector";
+import Image from "next/image";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Link from "next/link";

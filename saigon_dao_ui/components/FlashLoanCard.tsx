@@ -75,7 +75,7 @@ export default function FlashLoanCard({ asset }: FlashLoanAssetProps) {
 
       <div className="mt-6 flex justify-end">
         <button className="py-3 px-6 rounded-full font-medium transition-all duration-300 ease-in-out bg-gradient-to-r from-amber-400 to-red-600 text-white shadow-md hover:shadow-lg hover:scale-105">
-          Get Integration Support
+          View Documentation
         </button>
       </div>
     </div>
