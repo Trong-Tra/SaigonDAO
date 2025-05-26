@@ -24,16 +24,13 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
   const [isHovering, setIsHovering] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [amount, setAmount] = useState("");
-  
+
   const { address, isConnected } = useAccount();
-  const {
-    borrowFromCompound,
-    isBorrowPending,
-  } = useContracts();
+  const { borrowFromCompound, isBorrowPending } = useContracts();
 
   // Get token config
   const tokenConfig = TOKENS[asset.name as keyof typeof TOKENS];
-  
+
   // Fetch token balance
   const { data: tokenBalance } = useBalance({
     address,
@@ -53,7 +50,10 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
 
     try {
       const amountParsed = parseEther(amount);
-      await borrowFromCompound(tokenConfig.address as `0x${string}`, amountParsed);
+      await borrowFromCompound(
+        tokenConfig.address as `0x${string}`,
+        amountParsed
+      );
       setAmount("");
       setShowModal(false);
     } catch (error) {
@@ -64,10 +64,12 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
   const openBorrowModal = () => {
     // Only functional for VNST and vBTC
     if (asset.name !== "VNST" && asset.name !== "vBTC") {
-      toast.error(`${asset.name} lending coming soon! Use VNST or vBTC for now.`);
+      toast.error(
+        `${asset.name} lending coming soon! Use VNST or vBTC for now.`
+      );
       return;
     }
-    
+
     if (!isConnected) {
       toast.error("Please connect your wallet");
       return;
@@ -128,8 +130,8 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
         </div>
       </div>
 
-      <div className="mt-6 flex justify-center">
-        <button 
+      <div className="mt-6 flex justify-end">
+        <button
           onClick={openBorrowModal}
           className="py-3 px-8 rounded-full font-medium transition-all duration-300 ease-in-out bg-gradient-to-r from-amber-400 to-red-600 text-white shadow-md hover:shadow-lg hover:scale-105"
         >
@@ -144,7 +146,7 @@ export default function LendingAssetCard({ asset }: LendingAssetProps) {
             <h3 className="text-xl font-bold font-orbitron mb-4">
               Borrow {asset.name}
             </h3>
-            
+
             {isConnected && tokenBalance && (
               <p className="text-sm text-gray-600 mb-4 font-jakarta">
                 Wallet Balance: {formatBalance(tokenBalance.value)} {asset.name}

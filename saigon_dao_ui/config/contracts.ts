@@ -11,9 +11,9 @@ export const CONTRACT_ADDRESSES = {
     SaigonLending: '0x4C8B3276d27dD964372D0e8dA60f9B6F8a7bbc5A' as Address,
     SaigonFacade: '0x80b9a7c2f297c6e7f878b91861550d3a160ab1b4' as Address,
     // LST pairs
-    vBTC_LP: '0x0002e2dd3c629351733921a1adbe61f404a9ee4d' as Address,
+    sgvBTC: '0x0002e2dd3c629351733921a1adbe61f404a9ee4d' as Address,
     vBTC_Pool: '0xAF0DC04bbce47d388fce646A44bcD68ff7517218' as Address,
-    VNST_LP: '0xaac9cad204ffacb59d83340e8b598f596f288775' as Address,
+    sgVNST: '0xaac9cad204ffacb59d83340e8b598f596f288775' as Address,
     VNST_Pool: '0xd6c103530D6CCC07f266C7d6c61741aB69d4f32e' as Address,
   }
 } as const
@@ -1084,6 +1084,199 @@ export const SAIGON_LST_ABI = [
   }
 ] as const
 
+// SGLP ABI for direct liquidity staking
+export const SGLP_ABI = [
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "lstTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "liquidityTokenAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "provideLiquidity",
+    "inputs": [
+      {
+        "name": "liquidityAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "unstake",
+    "inputs": [
+      {
+        "name": "lstAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getExchangeRate",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "exchangeRate",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "lstToken",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract SaigonLST"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "liquidityToken",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "poolLiquidityVolume",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "lstVolume",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "ProvideLiquidity",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "nativeAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "lstAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Unstake",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "lstAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "nativeAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ExchangeRateUpdated",
+    "inputs": [
+      {
+        "name": "oldRate",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "newRate",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  }
+] as const
+
 // Helper function to get contract addresses for current chain
 export function getContractAddress(contractName: keyof typeof CONTRACT_ADDRESSES[17000], chainId: number = 17000) {
   const addresses = CONTRACT_ADDRESSES[chainId as keyof typeof CONTRACT_ADDRESSES]
@@ -1109,6 +1302,20 @@ export const TOKENS = {
     address: getContractAddress('VNST'),
     abi: MOCK_TOKEN_ABI,
   },
+  sgvBTC: {
+    symbol: 'sgvBTC',
+    name: 'Saigon vBTC',
+    decimals: 18,
+    address: getContractAddress('sgvBTC'),
+    abi: MOCK_TOKEN_ABI,
+  },
+  sgVNST: {
+    symbol: 'sgVNST',
+    name: 'Saigon VNST',
+    decimals: 18,
+    address: getContractAddress('sgVNST'),
+    abi: MOCK_TOKEN_ABI,
+  },
 } as const
 
 export const VAULTS = {
@@ -1123,15 +1330,15 @@ export const VAULTS = {
 
 export const LST_POOLS = {
   vBTC: {
-    lpToken: getContractAddress('vBTC_LP'),
+    lstToken: getContractAddress('sgvBTC'),
     pool: getContractAddress('vBTC_Pool'),
     underlying: TOKENS.vBTC,
-    abi: SAIGON_LST_ABI,
+    abi: SGLP_ABI,
   },
   VNST: {
-    lpToken: getContractAddress('VNST_LP'),
+    lstToken: getContractAddress('sgVNST'),
     pool: getContractAddress('VNST_Pool'),
     underlying: TOKENS.VNST,
-    abi: SAIGON_LST_ABI,
+    abi: SGLP_ABI,
   },
 } as const

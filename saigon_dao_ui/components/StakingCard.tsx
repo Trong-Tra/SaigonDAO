@@ -27,19 +27,37 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
 
   const data = {
     balance: isStaking ? token.balance : lst.balances.staked, // Show underlying token balance when staking, LST balance when unstaking
-    availableToStake: lst.balances.lp, // LP token balance for staking
+    availableToStake: token.balance, // Use underlying token balance for staking
     stakingToken: `sg${tokenType}`,
-    exchangeRate: `${exchangeRate} ${tokenType}`,
+    exchangeRate: `${lst.exchangeRate} ${tokenType}`,
     apy,
   };
 
+  // Check if user needs to approve underlying tokens for staking
+  // Use a small buffer to handle floating point precision issues
+  const stakeAmountNum = parseFloat(stakeAmount || "0");
+  const allowanceNum = parseFloat(lst.allowance || "0");
+
+  // If allowance is very large (like max uint256), consider it sufficient
+  const hasMaxApproval = allowanceNum > 1e30; // Extremely large number indicates max approval
+  const needsApproval =
+    isStaking &&
+    stakeAmountNum > 0 &&
+    !hasMaxApproval &&
+    allowanceNum < stakeAmountNum;
+
   // Debug logging
   console.log(`${tokenType} LST balances:`, lst.balances);
-  console.log(`${tokenType} data.availableToStake:`, data.availableToStake);
-
-  // Check if user needs to approve LP tokens for staking
-  const needsApproval =
-    isStaking && parseFloat(lst.allowance) < parseFloat(stakeAmount || "0");
+  console.log(`${tokenType} LST token address:`, lst.lstTokenAddress);
+  console.log(`${tokenType} Pool address:`, lst.pool?.pool);
+  console.log(`${tokenType} Underlying token balance:`, data.availableToStake);
+  console.log(`${tokenType} LST token balance (staked):`, lst.balances.staked);
+  console.log(`${tokenType} allowance:`, lst.allowance);
+  console.log(`${tokenType} stakeAmount:`, stakeAmount);
+  console.log(`${tokenType} stakeAmountNum:`, stakeAmountNum);
+  console.log(`${tokenType} allowanceNum:`, allowanceNum);
+  console.log(`${tokenType} hasMaxApproval:`, hasMaxApproval);
+  console.log(`${tokenType} needsApproval:`, needsApproval);
 
   // Handle max button click
   const handleMaxClick = () => {
@@ -56,8 +74,8 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
     setStakeAmount("0.00");
   };
 
-  // Handle approve LP tokens
-  const handleApproveLPTokens = async () => {
+  // Handle approve underlying tokens
+  const handleApproveUnderlyingTokens = async () => {
     if (!isConnected || !address) {
       toast.error("Please connect your wallet");
       return;
@@ -65,7 +83,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
 
     try {
       setIsProcessing(true);
-      await lst.approveLPToken(stakeAmount || "1000000");
+      await lst.approveUnderlyingToken(stakeAmount || "1000000");
     } catch (error) {
       console.error("Approval error:", error);
     } finally {
@@ -85,8 +103,8 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
       return;
     }
 
-    if (parseFloat(stakeAmount) > parseFloat(data.availableToStake)) {
-      toast.error("Insufficient LP token balance");
+    if (parseFloat(stakeAmount) > parseFloat(token.balance)) {
+      toast.error("Insufficient underlying token balance");
       return;
     }
 
@@ -133,7 +151,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
   const handleMainAction = async () => {
     if (isStaking) {
       if (needsApproval) {
-        await handleApproveLPTokens();
+        await handleApproveUnderlyingTokens();
       } else {
         await handleStake();
       }
@@ -163,13 +181,13 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
     if (isStaking) {
       if (needsApproval) {
         return {
-          text: "Approve LP Tokens",
+          text: `Approve ${tokenType}`,
           disabled: false,
           className: "bg-gradient-to-r from-orange-400 to-red-400 text-white",
         };
       }
       return {
-        text: "Stake LP Tokens",
+        text: `Stake ${tokenType}`,
         disabled: false,
         className: "bg-gradient-to-r from-teal-400 to-amber-300 text-white",
       };
@@ -282,7 +300,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
 
         <div className="ml-auto flex items-center">
           <span className="text-lg transition-all duration-300 ease-in-out">
-            Balance: {isStaking ? token.balance : 0.0}
+            Balance: {isStaking ? token.balance : lst.balances.staked}
           </span>
         </div>
       </div>

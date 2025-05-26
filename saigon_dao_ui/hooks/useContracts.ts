@@ -190,85 +190,97 @@ export function useVault() {
   }
 }
 
-// Hook for LST operations (LP token staking)
+// Hook for LST operations using SGLP (direct underlying token staking)
 export function useLST(poolKey: 'vBTC' | 'VNST') {
   const { address } = useAccount()
   const pool = LST_POOLS[poolKey]
   const { writeContract, data: hash, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash })
 
-  // Read user's staked balance (LST tokens)
+  // Read user's LST token balance (sgVNST or sgvBTC) from the LST token contract
   const stakedBalance = useReadContract({
-    address: pool.pool,
-    abi: pool.abi,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    query: { enabled: !!address }
-  })
-
-  // Read user's LP token balance (to stake)
-  const lpBalance = useReadContract({
-    address: pool.lpToken,
+    address: pool.lstToken,
     abi: MOCK_TOKEN_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: { enabled: !!address }
   })
 
-  // Read LP token allowance for staking
-  const lpAllowance = useReadContract({
-    address: pool.lpToken,
+  // Read user's underlying token balance (VNST or vBTC)
+  const underlyingBalance = useReadContract({
+    address: pool.underlying.address,
+    abi: MOCK_TOKEN_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address }
+  })
+
+  // Read underlying token allowance for SGLP contract
+  const underlyingAllowance = useReadContract({
+    address: pool.underlying.address,
     abi: MOCK_TOKEN_ABI,
     functionName: 'allowance',
     args: address ? [address, pool.pool] : undefined,
-    query: { enabled: !!address }
+    query: { 
+      enabled: !!address,
+      refetchInterval: 3000 // Refetch every 3 seconds to catch approval updates
+    }
   })
 
-  // Approve LP tokens for staking
-  const approveLPToken = async (amount: string) => {
+  // Read exchange rate from SGLP contract
+  const exchangeRate = useReadContract({
+    address: pool.pool,
+    abi: pool.abi,
+    functionName: 'getExchangeRate',
+    query: { enabled: true }
+  })
+
+  // Approve underlying tokens for SGLP contract
+  const approveUnderlyingToken = async (amount: string) => {
     try {
-      const parsedAmount = parseUnits(amount, 18)
+      // Approve a very large amount (max uint256) to avoid multiple approvals
+      const maxAmount = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
       await writeContract({
-        address: pool.lpToken,
+        address: pool.underlying.address,
         abi: MOCK_TOKEN_ABI,
         functionName: 'approve',
-        args: [pool.pool, parsedAmount]
+        args: [pool.pool, maxAmount]
       })
-      toast.success('Approving LP tokens for staking...')
+      toast.success(`Approving ${poolKey} for staking...`)
     } catch (error) {
-      toast.error('Failed to approve LP tokens')
-      console.error('Approve LP error:', error)
+      toast.error(`Failed to approve ${poolKey}`)
+      console.error('Approve underlying token error:', error)
     }
   }
 
-  // Stake LP tokens to receive LST tokens
+  // Stake underlying tokens directly to receive LST tokens
   const stake = async (amount: string) => {
     try {
-      const parsedAmount = parseUnits(amount, 18)
+      const parsedAmount = parseUnits(amount, pool.underlying.decimals)
       await writeContract({
         address: pool.pool,
         abi: pool.abi,
-        functionName: 'stake',
+        functionName: 'provideLiquidity',
         args: [parsedAmount]
       })
-      toast.success(`Staking ${poolKey} LP tokens to receive sg${poolKey}...`)
+      toast.success(`Staking ${amount} ${poolKey} to receive sg${poolKey}...`)
     } catch (error) {
-      toast.error('Failed to stake LP tokens')
+      toast.error(`Failed to stake ${poolKey}`)
       console.error('Stake error:', error)
     }
   }
 
-  // Unstake LST tokens to get LP tokens back
+  // Unstake LST tokens to get underlying tokens back
   const unstake = async (amount: string) => {
     try {
-      const parsedAmount = parseUnits(amount, 18)
+      const parsedAmount = parseUnits(amount, 18) // LST tokens are 18 decimals
       await writeContract({
         address: pool.pool,
         abi: pool.abi,
         functionName: 'unstake',
         args: [parsedAmount]
       })
-      toast.success(`Unstaking sg${poolKey} to receive ${poolKey} LP tokens...`)
+      toast.success(`Unstaking sg${poolKey} to receive ${poolKey}...`)
     } catch (error) {
       toast.error('Failed to unstake')
       console.error('Unstake error:', error)
@@ -277,12 +289,16 @@ export function useLST(poolKey: 'vBTC' | 'VNST') {
 
   return {
     pool,
+    lstTokenAddress: pool.lstToken,
     balances: {
       staked: stakedBalance.data ? formatEther(stakedBalance.data) : '0',
-      lp: lpBalance.data ? formatEther(lpBalance.data) : '0',
+      underlying: underlyingBalance.data ? formatUnits(underlyingBalance.data, pool.underlying.decimals) : '0',
+      lp: '0', // Deprecated - keeping for backward compatibility
     },
-    allowance: lpAllowance.data ? formatEther(lpAllowance.data) : '0',
-    approveLPToken,
+    allowance: underlyingAllowance.data ? formatUnits(underlyingAllowance.data, pool.underlying.decimals) : '0',
+    exchangeRate: exchangeRate.data ? formatEther(exchangeRate.data) : '1.0',
+    approveUnderlyingToken,
+    approveLPToken: approveUnderlyingToken, // Alias for backward compatibility
     stake,
     unstake,
     isPending: isPending || isConfirming,
