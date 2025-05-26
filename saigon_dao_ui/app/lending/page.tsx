@@ -6,7 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import LendingAssetCard from "@/components/LendingAssetCard";
 
 export default function LendingPage() {
-  // Mock assets data - you can replace with your own data later
+  // Keep all assets for UI design - only VNST and vBTC will have functional contract integration
   const lendingAssets = [
     {
       id: "vnst",
@@ -80,8 +80,10 @@ export default function LendingPage() {
                 Lending Markets
               </h1>
               <p className="text-gray-600 mt-5 font-jakarta text-lg max-w-3xl">
-                Supply assets to earn interest or borrow assets by providing
-                collateral.
+                Borrow assets against your supplied collateral. To supply assets
+                and earn interest, visit the{" "}
+                <span className="text-amber-600 font-medium">Liquidity</span>{" "}
+                page to get LST tokens.
               </p>
             </div>
 

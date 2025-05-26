@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useAccount } from "wagmi";
+import { useContracts } from "../hooks/useContracts";
+import { toast } from "react-hot-toast";
 
 type StakingCardProps = {
   tokenType: "VNST" | "vBTC";
@@ -10,34 +13,176 @@ type StakingCardProps = {
 export default function StakingCard({ tokenType }: StakingCardProps) {
   const [stakeAmount, setStakeAmount] = useState("0.00");
   const [isStaking, setIsStaking] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { isConnected, address } = useAccount();
 
-  // Mock data
-  const balanceData = {
-    VNST: {
-      balance: "1,237,182.92",
-      stakingToken: "sgVNST",
-      exchangeRate: "1.2 VNST",
-      apy: "11.5%",
-    },
-    vBTC: {
-      balance: "5.78",
-      stakingToken: "sgvBTC",
-      exchangeRate: "1.05 vBTC",
-      apy: "8.2%",
-    },
+  // Contract hooks
+  const contracts = useContracts();
+  const token = contracts.tokens[tokenType];
+  const lst = contracts.lst[tokenType];
+
+  // Exchange rate calculation (from LST pool if available)
+  const exchangeRate = "1.05"; // This would come from contract in real implementation
+  const apy = tokenType === "vBTC" ? "8.2%" : "11.5%";
+
+  const data = {
+    balance: isStaking ? token.balance : lst.balances.staked, // Show underlying token balance when staking, LST balance when unstaking
+    availableToStake: lst.balances.lp, // LP token balance for staking
+    stakingToken: `sg${tokenType}`,
+    exchangeRate: `${exchangeRate} ${tokenType}`,
+    apy,
   };
 
-  const data = balanceData[tokenType];
+  // Debug logging
+  console.log(`${tokenType} LST balances:`, lst.balances);
+  console.log(`${tokenType} data.availableToStake:`, data.availableToStake);
 
+  // Check if user needs to approve LP tokens for staking
+  const needsApproval =
+    isStaking && parseFloat(lst.allowance) < parseFloat(stakeAmount || "0");
+
+  // Handle max button click
   const handleMaxClick = () => {
-    // set this to max balance of the token when implementing wallet connection
-    setStakeAmount(isStaking ? data.balance : "0.00");
+    if (isStaking) {
+      setStakeAmount(token.balance);
+    } else {
+      setStakeAmount("0.00");
+    }
   };
 
+  // Handle stake/unstake mode toggle
   const handleToggleMode = (mode: boolean) => {
     setIsStaking(mode);
     setStakeAmount("0.00");
   };
+
+  // Handle approve LP tokens
+  const handleApproveLPTokens = async () => {
+    if (!isConnected || !address) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      await lst.approveLPToken(stakeAmount || "1000000");
+    } catch (error) {
+      console.error("Approval error:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle stake action
+  const handleStake = async () => {
+    if (!isConnected || !address) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    if (parseFloat(stakeAmount) > parseFloat(data.availableToStake)) {
+      toast.error("Insufficient LP token balance");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      await lst.stake(stakeAmount);
+      setStakeAmount("0.00");
+    } catch (error) {
+      console.error("Stake error:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle unstake action
+  const handleUnstake = async () => {
+    if (!isConnected || !address) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    if (parseFloat(stakeAmount) > parseFloat(data.balance)) {
+      toast.error("Insufficient staked balance");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      await lst.unstake(stakeAmount);
+      setStakeAmount("0.00");
+    } catch (error) {
+      console.error("Unstake error:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle main action button click
+  const handleMainAction = async () => {
+    if (isStaking) {
+      if (needsApproval) {
+        await handleApproveLPTokens();
+      } else {
+        await handleStake();
+      }
+    } else {
+      await handleUnstake();
+    }
+  };
+
+  // Determine button text and style
+  const getButtonConfig = () => {
+    if (!isConnected) {
+      return {
+        text: "Connect Wallet",
+        disabled: false,
+        className: "bg-gradient-to-r from-blue-400 to-purple-400 text-white",
+      };
+    }
+
+    if (isProcessing || token.isPending || lst.isPending) {
+      return {
+        text: "Processing...",
+        disabled: true,
+        className: "bg-gray-400 text-white cursor-not-allowed",
+      };
+    }
+
+    if (isStaking) {
+      if (needsApproval) {
+        return {
+          text: "Approve LP Tokens",
+          disabled: false,
+          className: "bg-gradient-to-r from-orange-400 to-red-400 text-white",
+        };
+      }
+      return {
+        text: "Stake LP Tokens",
+        disabled: false,
+        className: "bg-gradient-to-r from-teal-400 to-amber-300 text-white",
+      };
+    } else {
+      return {
+        text: "Unstake",
+        disabled: false,
+        className: "bg-gradient-to-r from-amber-200 to-pink-300",
+      };
+    }
+  };
+
+  const buttonConfig = getButtonConfig();
 
   return (
     <div className="p-6 rounded-xl bg-white/30 backdrop-blur-sm border border-white/50 shadow-lg font-orbitron">
@@ -137,7 +282,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
 
         <div className="ml-auto flex items-center">
           <span className="text-lg transition-all duration-300 ease-in-out">
-            Balance: {data.balance}
+            Balance: {isStaking ? token.balance : 0.0}
           </span>
         </div>
       </div>
@@ -181,14 +326,23 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
 
       {/* Action Button */}
       <button
-        className={`w-4/5 mx-auto py-3 px-4 rounded-full font-medium font-orbitron block transition-all duration-300 ease-in-out ${
-          isStaking
-            ? "bg-gradient-to-r from-teal-400 to-amber-300 text-white"
-            : "bg-gradient-to-r from-amber-200 to-pink-300"
-        }`}
+        onClick={handleMainAction}
+        disabled={buttonConfig.disabled}
+        className={`w-4/5 mx-auto py-3 px-4 rounded-full font-medium font-orbitron block transition-all duration-300 ease-in-out ${buttonConfig.className}`}
       >
-        {isStaking ? "Stake" : "Unstake"}
+        {buttonConfig.text}
       </button>
+
+      {/* Additional Info for Users */}
+      {isConnected && (
+        <div className="mt-4 text-center text-sm text-gray-600">
+          {needsApproval && (
+            <p className="text-orange-600 mt-1">
+              Approval required before staking
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
