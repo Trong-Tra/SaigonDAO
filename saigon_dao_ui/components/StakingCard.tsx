@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useAccount } from "wagmi";
+import { useAppKit } from "@reown/appkit/react";
 import { useContracts } from "../hooks/useContracts";
 import { toast } from "react-hot-toast";
 
@@ -15,6 +16,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
   const [isStaking, setIsStaking] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const { isConnected, address } = useAccount();
+  const { open } = useAppKit();
 
   // Contract hooks
   const contracts = useContracts();
@@ -74,10 +76,21 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
     setStakeAmount("0.00");
   };
 
+  // Format balance to 2 decimal places
+  const formatBalance = (balance: string) => {
+    const num = parseFloat(balance || "0");
+    return num.toFixed(2);
+  };
+
+  // Handle wallet connection using AppKit (same as Header)
+  const handleConnectWallet = () => {
+    open();
+  };
+
   // Handle approve underlying tokens
   const handleApproveUnderlyingTokens = async () => {
     if (!isConnected || !address) {
-      toast.error("Please connect your wallet");
+      // This should not happen since handleMainAction checks connection first
       return;
     }
 
@@ -94,7 +107,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
   // Handle stake action
   const handleStake = async () => {
     if (!isConnected || !address) {
-      toast.error("Please connect your wallet");
+      // This should not happen since handleMainAction checks connection first
       return;
     }
 
@@ -122,7 +135,7 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
   // Handle unstake action
   const handleUnstake = async () => {
     if (!isConnected || !address) {
-      toast.error("Please connect your wallet");
+      // This should not happen since handleMainAction checks connection first
       return;
     }
 
@@ -147,8 +160,13 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
     }
   };
 
-  // Handle main action button click
+  // Handle main action button click (only for stake/unstake, not wallet connection)
   const handleMainAction = async () => {
+    // This should only be called when wallet is connected
+    if (!isConnected) {
+      return; // Should not happen due to disabled state
+    }
+
     if (isStaking) {
       if (needsApproval) {
         await handleApproveUnderlyingTokens();
@@ -160,15 +178,10 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
     }
   };
 
-  // Determine button text and style
-  const getButtonConfig = () => {
-    if (!isConnected) {
-      return {
-        text: "Connect Wallet",
-        disabled: false,
-        className: "bg-gradient-to-r from-blue-400 to-purple-400 text-white",
-      };
-    }
+  // Determine button configuration for action button
+  const getActionButtonConfig = () => {
+    const baseDisabled =
+      !isConnected || isProcessing || token.isPending || lst.isPending;
 
     if (isProcessing || token.isPending || lst.isPending) {
       return {
@@ -182,25 +195,31 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
       if (needsApproval) {
         return {
           text: `Approve ${tokenType}`,
-          disabled: false,
-          className: "bg-gradient-to-r from-orange-400 to-red-400 text-white",
+          disabled: baseDisabled,
+          className: baseDisabled
+            ? "bg-gray-400 text-white cursor-not-allowed"
+            : "bg-gradient-to-r from-orange-400 to-red-400 text-white hover:from-orange-500 hover:to-red-500",
         };
       }
       return {
         text: `Stake ${tokenType}`,
-        disabled: false,
-        className: "bg-gradient-to-r from-teal-400 to-amber-300 text-white",
+        disabled: baseDisabled,
+        className: baseDisabled
+          ? "bg-gray-400 text-white cursor-not-allowed"
+          : "bg-gradient-to-r from-teal-400 to-amber-300 text-white hover:from-teal-500 hover:to-amber-400",
       };
     } else {
       return {
-        text: "Unstake",
-        disabled: false,
-        className: "bg-gradient-to-r from-amber-200 to-pink-300",
+        text: `Unstake sg${tokenType}`,
+        disabled: baseDisabled,
+        className: baseDisabled
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-gradient-to-r from-amber-200 to-pink-300 hover:from-amber-300 hover:to-pink-400",
       };
     }
   };
 
-  const buttonConfig = getButtonConfig();
+  const actionButtonConfig = getActionButtonConfig();
 
   return (
     <div className="p-6 rounded-xl bg-white/30 backdrop-blur-sm border border-white/50 shadow-lg font-orbitron">
@@ -300,7 +319,8 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
 
         <div className="ml-auto flex items-center">
           <span className="text-lg transition-all duration-300 ease-in-out">
-            Balance: {isStaking ? token.balance : lst.balances.staked}
+            Balance:{" "}
+            {formatBalance(isStaking ? token.balance : lst.balances.staked)}
           </span>
         </div>
       </div>
@@ -308,10 +328,48 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
       {/* Input Field */}
       <div className="relative mb-6 ml-9">
         <input
-          type="text"
+          type="number"
           value={stakeAmount}
-          onChange={(e) => setStakeAmount(e.target.value)}
-          className="w-full text-5xl font-bold text-black py-2 bg-transparent border-none focus:outline-none focus:ring-0 font-orbitron"
+          onChange={(e) => {
+            const value = e.target.value;
+            // Only allow numbers and decimal point
+            if (value === "" || /^\d*\.?\d*$/.test(value)) {
+              setStakeAmount(value);
+            }
+          }}
+          onKeyDown={(e) => {
+            // Allow: backspace, delete, tab, escape, enter, decimal point
+            if (
+              [46, 8, 9, 27, 13, 110, 190].indexOf(e.keyCode) !== -1 ||
+              // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+              (e.keyCode === 65 && e.ctrlKey === true) ||
+              (e.keyCode === 67 && e.ctrlKey === true) ||
+              (e.keyCode === 86 && e.ctrlKey === true) ||
+              (e.keyCode === 88 && e.ctrlKey === true) ||
+              // Allow: home, end, left, right
+              (e.keyCode >= 35 && e.keyCode <= 39)
+            ) {
+              return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if (
+              (e.shiftKey || e.keyCode < 48 || e.keyCode > 57) &&
+              (e.keyCode < 96 || e.keyCode > 105)
+            ) {
+              e.preventDefault();
+            }
+          }}
+          onPaste={(e) => {
+            e.preventDefault();
+            const paste = e.clipboardData.getData("text");
+            // Only allow pasted content that matches number pattern
+            if (/^\d*\.?\d*$/.test(paste)) {
+              setStakeAmount(paste);
+            }
+          }}
+          step="0.01"
+          min="0"
+          className="w-full text-5xl font-bold text-black py-2 bg-transparent border-none focus:outline-none focus:ring-0 font-orbitron [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0.00"
         />
         <button
@@ -342,14 +400,29 @@ export default function StakingCard({ tokenType }: StakingCardProps) {
         </div>
       </div>
 
-      {/* Action Button */}
-      <button
-        onClick={handleMainAction}
-        disabled={buttonConfig.disabled}
-        className={`w-4/5 mx-auto py-3 px-4 rounded-full font-medium font-orbitron block transition-all duration-300 ease-in-out ${buttonConfig.className}`}
-      >
-        {buttonConfig.text}
-      </button>
+      {/* Button Stack - Same Position with Conditional Visibility */}
+      <div className="relative">
+        {/* Connect Wallet Button - Show when NOT connected */}
+        {!isConnected && (
+          <button
+            onClick={handleConnectWallet}
+            className="w-4/5 mx-auto py-3 px-4 rounded-full font-medium font-orbitron block transition-all duration-300 ease-in-out bg-gradient-to-r from-blue-400 to-purple-400 text-white hover:from-blue-500 hover:to-purple-500"
+          >
+            Connect Wallet
+          </button>
+        )}
+
+        {/* Action Button (Stake/Unstake) - Show when connected */}
+        {isConnected && (
+          <button
+            onClick={handleMainAction}
+            disabled={actionButtonConfig.disabled}
+            className={`w-4/5 mx-auto py-3 px-4 rounded-full font-medium font-orbitron block transition-all duration-300 ease-in-out ${actionButtonConfig.className}`}
+          >
+            {actionButtonConfig.text}
+          </button>
+        )}
+      </div>
 
       {/* Additional Info for Users */}
       {isConnected && (
