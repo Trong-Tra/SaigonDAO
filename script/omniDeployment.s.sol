@@ -180,7 +180,18 @@ contract DeployAll is Script {
         lendingContract.updateTokenPrice(vbtcToken, 26_000 * 10**18);
         lendingContract.updateTokenPrice(vnstToken, 1 * 10**18);
         
+        // Transfer ownership of SGLP pools to SaigonLending contract
+        // This is critical for the lending contract to be able to call lend() function
+        // The pools are currently owned by the SaigonLSTFactory
+        SaigonLSTFactory factory = SaigonLSTFactory(lstFactoryAddress);
+        
+        // Use the factory's transferPoolOwnership function to transfer ownership to lending contract
+        factory.transferPoolOwnership(vbtcPoolAddress, lendingAddress);
+        factory.transferPoolOwnership(vnstPoolAddress, lendingAddress);
+        
         console.log("SaigonLending deployed at:", lendingAddress);
+        console.log("Transferred ownership of vBTC pool to SaigonLending");
+        console.log("Transferred ownership of VNST pool to SaigonLending");
     }
     
     function deployFacade() internal {

@@ -72,4 +72,15 @@ contract SaigonLSTFactory is Ownable {
     function getDeployedLiquidityPools() external view returns (address[] memory) {
         return deployedLiquidityPools;
     }
+
+    /**
+     * @dev Transfer ownership of a specific liquidity pool
+     * @param poolAddress Address of the liquidity pool
+     * @param newOwner Address of the new owner
+     */
+    function transferPoolOwnership(address poolAddress, address newOwner) external onlyOwner {
+        require(newOwner != address(0), "New owner cannot be zero address");
+        SGLP pool = SGLP(poolAddress);
+        pool.transferOwnership(newOwner);
+    }
 }
