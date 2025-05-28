@@ -1,11 +1,26 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import LendingAssetCard from "@/components/LendingAssetCard";
+import { useContracts } from "@/hooks/useContracts";
+import { useAccount } from "wagmi";
 
 export default function LendingPage() {
+  const { address } = useAccount();
+  const contracts = useContracts();
+  const setupStatus = contracts.checkLendingSetup();
+
+  // Get real data from contracts
+  const vnstAvailable = contracts.getAvailableLendingAmount(
+    contracts.tokens.VNST.token.address
+  );
+  const vbtcAvailable = contracts.getAvailableLendingAmount(
+    contracts.tokens.vBTC.token.address
+  );
+
   // Keep all assets for UI design - only VNST and vBTC will have functional contract integration
   const lendingAssets = [
     {
@@ -14,7 +29,7 @@ export default function LendingPage() {
       logo: "/images/tokens/vnst.png",
       interestRate: "3.5%",
       apy: "12.8%",
-      totalSupply: "1,234,567",
+      totalSupply: vnstAvailable || "0", // Real data from contract
       utilization: "76%",
     },
     {
@@ -23,7 +38,7 @@ export default function LendingPage() {
       logo: "/images/tokens/vbtc.png",
       interestRate: "2.8%",
       apy: "10.2%",
-      totalSupply: "543",
+      totalSupply: vbtcAvailable || "0", // Real data from contract
       utilization: "82%",
     },
     {
@@ -83,7 +98,14 @@ export default function LendingPage() {
                 Borrow assets against your supplied collateral. To supply assets
                 and earn interest, visit the{" "}
                 <span className="text-amber-600 font-medium">Liquidity</span>{" "}
-                page to get LST tokens.
+                page to get LST tokens. Manage your existing loans on the{" "}
+                <Link
+                  href="/loan-management"
+                  className="text-amber-600 font-medium underline"
+                >
+                  My Loans
+                </Link>{" "}
+                page.
               </p>
             </div>
 

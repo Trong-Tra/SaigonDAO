@@ -15,6 +15,8 @@ export default function Sidebar() {
       setActiveLink("provide-liquidity");
     } else if (pathname.startsWith("/lending")) {
       setActiveLink("lending");
+    } else if (pathname.startsWith("/loan-management")) {
+      setActiveLink("loan-management");
     } else if (pathname.startsWith("/margin")) {
       setActiveLink("margin");
     } else if (pathname.startsWith("/flash-loan")) {
@@ -29,6 +31,7 @@ export default function Sidebar() {
       href: "/liquidity/VNST", // Default to VNST
     },
     { id: "lending", label: "Lending", href: "/lending" },
+    { id: "loan-management", label: "My Loans", href: "/loan-management" },
     { id: "margin", label: "Margin", href: "/margin" },
     { id: "flash-loan", label: "Flash Loan", href: "/flash-loan" },
   ];
