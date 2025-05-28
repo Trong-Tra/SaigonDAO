@@ -44,7 +44,7 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
 
 ## 🎬 Demo Video
 
-*(Link to Demo Video Coming Soon!)*
+[Watch the Demo Video](https://www.youtube.com/watch?v=rBF7WXqLfuk)
 
 ## 📸 Screenshots
 
