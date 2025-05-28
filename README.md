@@ -1,5 +1,9 @@
 # SaigonDAO 🇻🇳
 
+<div align="center">
+    <img src="./saigon_dao_ui/public/images/logo.png" alt="SaigonDAO Logo"/>
+</div>
+
 <h3 align="center">Powering Vietnam's DeFi Ecosystem</h3>
 
 **SaigonDAO is a live, decentralized finance (DeFi) platform meticulously crafted for the Vietnamese market.** It unlocks the latent potential of established, Vietnam-focused tokens like **vBTC** (from Nami Foundation) and **VNST** (from SCI Lab) by integrating them into a powerful suite of DeFi tools. Our mission is to provide accessible, efficient, and localized financial infrastructure, empowering users and fostering innovation within Vietnam's vibrant crypto community.
@@ -62,6 +66,41 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
     *   **Price Oracle System:** Provides reliable, manipulation-resistant price feeds for vBTC/VNST to ensure accurate liquidations and system stability.
 *   **Architecture:** Utilizes the **Facade design pattern** to offer a simplified user experience, abstracting complex interactions while allowing modular upgrades.
 
+### Tech Stack
+
+<div align="center">  
+    <img src="https://skillicons.dev/icons?i=git,github,vscode,figma,react,nextjs" alt="Tech stack icons"/> <br>
+    <img src="https://skillicons.dev/icons?i=tailwind,ts,solidity,foundry,ethereum" alt="Tech stack icons"/> <br>
+</div>
+
+### Core Technologies
+
+- **Git & GitHub**: For version control and collaboration, enabling seamless code management and team workflows.
+- **VSCode**: A versatile code editor with extensive extensions, used for writing, debugging, and deploying code across various projects.
+- **Figma**: A collaborative design tool for creating high-fidelity UI/UX designs, wireframes, and prototypes for web and mobile applications.
+- **React**: A powerful JavaScript library for building dynamic and responsive user interfaces in web applications.
+- **Next.js**: A React framework that enables server-side rendering and static site generation for fast and SEO-friendly web applications.
+- **Tailwind CSS**: A utility-first CSS framework for designing modern and responsive user interfaces with ease.
+- **TypeScript**: A strongly-typed programming language that builds on JavaScript, providing better tooling and maintainability for large-scale projects.
+
+### Blockchain & Web3 Technologies
+
+- **Solidity**: The primary programming language for developing secure and efficient Ethereum-based smart contracts.
+- **Foundry**: A smart contract development framework that simplifies testing, debugging, and deploying Solidity contracts.
+- **Price Oracle System**: Provides reliable, manipulation-resistant price feeds for vBTC/VNST to ensure accurate liquidations and system stability.
+
+### Infrastructure
+
+- **Frontend Deployment**: Vercel for hosting the Next.js application.
+- **Smart Contracts Deployment**: Ethereum blockchain for decentralized execution.
+- **Testing Framework**: Forge (Foundry) for comprehensive smart contract testing.
+
+### Tools
+
+- **Package Manager**: pnpm for efficient dependency management.
+- **Linting**: ESLint for maintaining code quality and consistency.
+- **Formatting**: Prettier for automatic code formatting.
+
 ## 🔥 Features
 
 *   ✅ **Deposit & Earn:** Stake vBTC & VNST to receive appreciating sgvBTC & sgVNST.
@@ -71,6 +110,47 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
 *   ✅ **Seamless vBTC:** Move vBTC on-chain and off-chain easily via the Custodian Bridge.
 *   ✅ **Vietnam-Focused:** Built specifically for the needs and context of the Vietnamese crypto community.
 *   ✅ **Simplified Interface:** Complex DeFi made accessible through thoughtful design (Facade Pattern).
+
+## 🚀 Local Deployment Instructions
+
+To run SaigonDAO locally, follow these steps:
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/Trong-tra/SaigonDAO.git
+   cd SaigonDAO
+   ```
+
+2. **Install Dependencies:**
+   Ensure you have `pnpm` installed. Then, run:
+   ```bash
+   pnpm install
+   ```
+
+3. **Set Up Environment Variables:**
+   Create a `.env` file in the root directory and configure the required environment variables. Refer to `.env.example` if available.
+
+4. **Compile Contracts:**
+   Use Foundry to compile the smart contracts:
+   ```bash
+   forge build
+   ```
+
+5. **Run Tests:**
+   Execute the test suite to ensure everything is working:
+   ```bash
+   forge test
+   ```
+
+6. **Start the Frontend:**
+   Navigate to the `saigon_dao_ui` directory and start the development server:
+   ```bash
+   cd saigon_dao_ui
+   pnpm dev
+   ```
+
+7. **Access the Application:**
+   Open your browser and navigate to `http://localhost:3000`.
 
 ## Contributing 🎮
 
