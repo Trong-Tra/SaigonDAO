@@ -1,33 +1,69 @@
 "use client";
-import Partner2 from "@/public/Bifrost.svg";
-import Partner3 from "@/public/OG.svg";
-import Partner1 from "@/public/VBI.svg";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
 const PartnerSection = () => {
   return (
-    <div className="relative overflow-hidden bg-black py-10 h-48">
+    <div className="relative overflow-hidden bg-transparent py-16 h-72 mb-8">
       <motion.div
         className="flex space-x-16 w-max absolute"
         animate={{ x: "-75%" }}
         transition={{ ease: "linear", duration: 130, repeat: Infinity }}
       >
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="flex space-x-16">
-            <Image src={Partner1} alt="Partner 1" width={200} height={100} />
-            <Image src={Partner2} alt="Partner 2" width={200} height={100} />
-            <Image src={Partner3} alt="Partner 3" width={200} height={100} />
-          </div>
-        ))}
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="flex space-x-16">
-            <Image src={Partner1} alt="Partner 1" width={200} height={100} />
-            <Image src={Partner2} alt="Partner 2" width={200} height={100} />
-            <Image src={Partner3} alt="Partner 3" width={200} height={100} />
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="flex space-x-16 items-center">
+            <div
+              className="bg-slate-800 p-4 rounded-lg flex items-center justify-center"
+              style={{ width: 220, height: 120 }}
+            >
+              <Image
+                src="/images/partners/NamiFoundation.png"
+                alt="Nami Foundation"
+                width={200}
+                height={80}
+                className="object-contain"
+              />
+            </div>
+            <div
+              className="bg-white p-4 rounded-lg flex items-center justify-center"
+              style={{ width: 180, height: 120 }}
+            >
+              <Image
+                src="/images/partners/SCI.png"
+                alt="SCI"
+                width={140}
+                height={80}
+                className="object-contain"
+              />
+            </div>
+            <div
+              className="bg-slate-800 p-4 rounded-lg flex items-center justify-center"
+              style={{ width: 220, height: 120 }}
+            >
+              <Image
+                src="/images/partners/NamiFoundation.png"
+                alt="Nami Foundation"
+                width={200}
+                height={80}
+                className="object-contain"
+              />
+            </div>
+            <div
+              className="bg-white p-4 rounded-lg flex items-center justify-center"
+              style={{ width: 180, height: 120 }}
+            >
+              <Image
+                src="/images/partners/SCI.png"
+                alt="SCI"
+                width={140}
+                height={80}
+                className="object-contain"
+              />
+            </div>
           </div>
         ))}
       </motion.div>
+      <div className="absolute inset-x-0 bottom-0 h-12 bg-transparent"></div>
     </div>
   );
 };
