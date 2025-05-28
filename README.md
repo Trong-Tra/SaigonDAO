@@ -70,7 +70,7 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
 
 <div align="center">  
     <img src="https://skillicons.dev/icons?i=git,github,vscode,figma,react,nextjs" alt="Tech stack icons"/> <br>
-    <img src="https://skillicons.dev/icons?i=tailwind,ts,solidity,foundry,ethereum" alt="Tech stack icons"/> <br>
+    <img src="https://skillicons.dev/icons?i=tailwind,ts,solidity" alt="Tech stack icons"/> <br>
 </div>
 
 ### Core Technologies
