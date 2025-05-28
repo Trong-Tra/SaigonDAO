@@ -44,7 +44,7 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
 
 ## 🎬 Demo Video
 
-[Watch the Demo Video](https://www.youtube.com/watch?v=rBF7WXqLfuk)
+[![Watch the Demo Video](https://img.youtube.com/vi/rBF7WXqLfuk/0.jpg)](https://www.youtube.com/watch?v=rBF7WXqLfuk)
 
 ## 📸 Screenshots
 
@@ -57,6 +57,9 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
 ![image](https://github.com/user-attachments/assets/5e65e10e-8186-4488-a867-c205f6ff0485)
 
 ## Deep Research, Documentation
+
+Discover the in-depth documentation detailing the journey of creating SaigonDAO. This comprehensive document covers the design principles, technical architecture, and development process that brought the platform to life. Whether you're a developer, investor, or enthusiast, gain valuable insights into the foundation of SaigonDAO.
+
 [Explore the Docs](https://drive.google.com/file/d/1mMpAQmh_DqcoVP0-ZCUGTKAenV5_3oY-/view?usp=sharing)
 
 ## 🛠️ Technical Details
