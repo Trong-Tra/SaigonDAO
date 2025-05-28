@@ -111,6 +111,26 @@ SaigonDAO creates a synergistic ecosystem where everyone benefits:
 *   ✅ **Vietnam-Focused:** Built specifically for the needs and context of the Vietnamese crypto community.
 *   ✅ **Simplified Interface:** Complex DeFi made accessible through thoughtful design (Facade Pattern).
 
+## 📜 Contract Addresses
+
+Here are the deployed contract addresses currently in use on the **Holesky Testnet (Chain ID: 1700)**:
+
+| **Contract**                | **Address**                                   |
+|-----------------------------|-----------------------------------------------|
+| vBTC                        | `0x7aefae495633112fa8480b15f57c1758df9ec020` |
+| VNST                        | `0x327a630fdf431f9788ad64c418cacd30dad5a01f` |
+| MockPriceOracle             | `0xbb6be7457e2708837edb1a3b03e547359a7660ca` |
+| vBTC_VNST_Vault             | `0x0724aef72348691f2f8924c0ebc5f83200902f1a` |
+| SaigonLSTFactory            | `0xec9e0cfcf53dae6c2b99974e77339ee638aff302` |
+| SaigonLending               | `0xaa5d80f1562de933a19bf13c4391dc5b6ee9d995` |
+| SaigonFacade                | `0x67bd4566effbb7f578ea4af20b02aed1b80e7ee2` |
+| sgvBTC                      | `0x34fC1fbE05AfadE837293F1A4eB34E8395B2eB9B` |
+| vBTC_Pool                   | `0x65F645Fc9e9F2fa9D92BbFF7c99fBDa06fD002B4` |
+| sgVNST                      | `0x90df73b1dfD5b0Ff5fF74D90E0B75c1463371A32` |
+| VNST_Pool                   | `0xC163B637aD9Cbc2B53f7161a8CEcaE2f680789b8` |
+
+Feel free to explore these contracts on the [Holesky Etherscan](https://holesky.etherscan.io).
+
 ## 🚀 Local Deployment Instructions
 
 To run SaigonDAO locally, follow these steps:
