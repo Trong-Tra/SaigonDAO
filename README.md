@@ -189,7 +189,7 @@ To run SaigonDAO locally, follow these steps:
 This project is developed and maintained by **[Trong-tra](https://github.com/Trong-tra)**.
 
 <div align="center">
-    <img src="https://emerald-imaginative-dingo-160.mypinata.cloud/ipfs/bafybeieekpq3nrpvbpeqsbi4mzyy2dxdze4cxnebmgjnlbyge6d5roys44" alt="Contributor NFT" width="200"/>
+    <img src="https://emerald-imaginative-dingo-160.mypinata.cloud/ipfs/bafybeihqjecymbqxilbfttpd27llvyuf3no3h72me55er2an5ebjiwzz7i" alt="Contributor NFT" width="200"/>
 </div>
 
 Contributions, issues, and feature requests are welcome! Feel free to check the issues page or submit a pull request. Showcase your creativity and help shape the future of Vietnam's DeFi ecosystem.
