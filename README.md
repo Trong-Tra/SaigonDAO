@@ -10,6 +10,24 @@
 
 We bridge the gap between existing assets and cutting-edge DeFi capabilities, offering yield generation, lending, leveraged trading, and more – all centered around the tokens Vietnamese users know and trust.
 
+---
+
+## ARCHIVE
+
+SaigonDAO is now officially archived. VNST is no longer active.
+
+SaigonDAO played a significant role in shaping my journey. While it may not have been the most innovative product, nor the one I am most proud of technically, it unexpectedly became the Champion Product at SEA Ideathon 2025.
+
+You can view the official announcement here: [SEA Ideathon 2025 Announcement](https://www.facebook.com/scilabs.io/posts/pfbid033T9rkipPPMvsHw3skY2urd1iW1dFpEg2Y6tr72zi62nMifJx5Mk5nPD19PZhzW4l?rdid=l1AJw4netWfNuDSB#)
+
+At this time, there is no strong market demand to justify further development. While I hope there may be an opportunity to revisit and evolve the concept in the future, active development has officially ceased.
+
+The source code remains fully open and accessible to everyone. All deployments are on-chain and remain interactable.
+
+Feel free to explore, experiment, and build upon it.
+
+---
+
 ## ✨ Core Benefits
 
 SaigonDAO creates a synergistic ecosystem where everyone benefits:
@@ -186,10 +204,8 @@ To run SaigonDAO locally, follow these steps:
 
 ## Contributing 🎮
 
-This project is developed and maintained by **[Trong-tra](https://github.com/Trong-tra)**.
+This project is developed by **[Trong-tra](https://github.com/Trong-tra)**.
 
 <div align="center">
     <img src="https://emerald-imaginative-dingo-160.mypinata.cloud/ipfs/bafybeihqjecymbqxilbfttpd27llvyuf3no3h72me55er2an5ebjiwzz7i" alt="Contributor NFT" width="200"/>
 </div>
-
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page or submit a pull request. Showcase your creativity and help shape the future of Vietnam's DeFi ecosystem.
